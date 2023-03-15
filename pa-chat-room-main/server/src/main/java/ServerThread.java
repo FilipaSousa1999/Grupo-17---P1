@@ -1,40 +1,64 @@
+import java.io.BufferedReader;
+import  jaca.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import java.io.PrintWriter;
+
 
 public class ServerThread extends Thread {
-    private final int port;
-    private DataInputStream in;
+    //Atributos estáticos
+    private static ArrayList<BufferedWriter> clientes;
+    private String nome;
+    private InputStreamReader inr;
+    private BufferedReader bfr;
+    private InputStream in;
     private PrintWriter out;
-    private ServerSocket server;
-    private Socket socket;
-
-    public ServerThread ( int port ) {
-        this.port = port;
+    private static ServerSocket server;
+    private Socket con;
+    /**Método construtor
+     * @param con do tipo Socket
+     */
+    public ServerThread ( Socket con ) {
+        this.con = con;
         try {
-            server = new ServerSocket ( this.port );
+            in = con.getInputStream();
+            inr = new InputStremReader();
+            bfr = new  BufferedReader(inr);
         } catch ( IOException e ) {
             e.printStackTrace ( );
         }
     }
-
+    /**
+     * Método run
+     * Qd um cliente envia uma msg, o servidor recebe e manda para todos os clientes
+     */
     public void run ( ) {
+        try {
+            String msg;
+            OutputStrem ou = this.con.getOutputStream();
+            Writter ouw = new OutputStreamWriter(ou);
+            BufferedWriter bfw = new BufferedWriter(ouw);
+            clientes.add(bfw);
+            nome = msg = bfr.readLine();
+        while ( !"Sair" .equalsIgnoreCasa(msg) && msg!=null ) {
+          msg = bfr.readLine();
+          sendToAll(bfw, msg);
+          System.out.println(msg);
 
-        while ( true ) {
-            try {
-                System.out.println ( "Accepting Data" );
-                socket = server.accept ( );
-                in = new DataInputStream ( socket.getInputStream ( ) );
-                out = new PrintWriter ( socket.getOutputStream ( ) , true );
-                String message = in.readUTF ( );
-                System.out.println ( "***** " + message + " *****" );
-                out.println ( message.toUpperCase ( ) );
-            } catch ( IOException e ) {
-                e.printStackTrace ( );
-            }
         }
-
+    } catch ( IOException e ) {
+        e.printStackTrace ( );
     }
+
 }
