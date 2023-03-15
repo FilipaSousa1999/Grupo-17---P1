@@ -58,6 +58,18 @@ public class ClientThread extends Thread {
                 e.printStackTrace ( );
             }
         }
+
+        String MsgFromClient;
+        while (socket.isConnected()) {
+            try {
+                MsgFromClient = in.readLine();
+                broadcastMsg(MsgFromClient);
+            } catch (IOException e) {
+                CloseThread(socket,in,out);
+                break;
+            }
+        }
+
     }
 
 
@@ -72,7 +84,7 @@ public class ClientThread extends Thread {
                 }
 
             } catch (IOException e) {
-                CloseThread();
+                CloseThread(this.socket, this.in,this,out);
             }
 
         }
