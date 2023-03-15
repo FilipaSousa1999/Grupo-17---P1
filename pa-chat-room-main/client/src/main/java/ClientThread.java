@@ -60,7 +60,7 @@ public class ClientThread extends Thread {
         }
 
         String MsgFromClient;
-        while (socket.isConnected()) {
+        while (socket.isConnected()) {   //enviar mensagens
             try {
                 MsgFromClient = in.readLine();
                 broadcastMsg(MsgFromClient);
@@ -74,7 +74,7 @@ public class ClientThread extends Thread {
 
 
     //Enviar mensagens
-    public void broadcastMsg(String message) {
+    public void broadcastMsg(String message) {    //broadcast
         for (ClientThread Client : clientThread) {
             try {
                 if (!Client.getName.equals(this.getName())) {
@@ -92,7 +92,7 @@ public class ClientThread extends Thread {
     }
 
 
-    public void removeClientThread() {
+    public void removeClientThread() {        //alguem saiu 
         ClientThreads.remove(this);  //array com clients
         broadcastMsg("SERVER:" + this.ClientName + "saiu de chat");
     }
