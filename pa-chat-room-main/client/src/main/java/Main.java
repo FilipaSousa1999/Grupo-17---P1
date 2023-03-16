@@ -1,3 +1,7 @@
+package client.src.main.java;
+
+import main.java.ClientThread;
+
 public class Main {
 
     public static void main ( String[] args ) {
