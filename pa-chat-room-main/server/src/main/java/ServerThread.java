@@ -26,8 +26,8 @@ public class ServerThread extends Thread {
     private PrintWriter out;
     private static ServerSocket server;
     private Socket con;
-    /**Método construtor
-     * @param con do tipo Socket
+    /**Method construtor
+     * @param con of type Socket
      */
     public ServerThread ( Socket con ) {
         this.con = con;
@@ -40,8 +40,8 @@ public class ServerThread extends Thread {
         }
     }
     /**
-     * Método run
-     * Qd um cliente envia uma msg, o servidor recebe e manda para todos os clientes
+     * Method run
+     * When a client sends a msg, the server receives it and sends it to all clients
      */
     public void run ( ) {
         try {
@@ -60,5 +60,22 @@ public class ServerThread extends Thread {
     } catch ( IOException e ) {
         e.printStackTrace ( );
     }
-
+/**
+ *Method to send message to all clients
+ * @param bwSaida of type BufferedWriter
+ * @param msg of type String
+ * @throws IOException
+ */
+public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException
+    {
+        BufferedWriter bwS;
+        for (BufferedWriter bw : clientes){
+            bwS = (BufferedWriter) bw;
+            if(!(bwSaida == bwS)) {
+                bw.write(nome + " -> " + msg+"\r\n");
+                bw.flush();
+            }
+        }
+    }
+    }
 }
