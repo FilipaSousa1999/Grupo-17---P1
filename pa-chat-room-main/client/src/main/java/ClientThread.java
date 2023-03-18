@@ -2,9 +2,12 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientThread extends Thread {
+    private String ClientName;
     private final int port;
     private final int id;
     private final int freq;
@@ -16,7 +19,22 @@ public class ClientThread extends Thread {
         this.port = port;
         this.id = id;
         this.freq = freq;
+        this.ClientName = in.readLine();
+        broadcastMsg("SERVER:" + this.ClientName + "entra em chat");
     }
+
+
+    private String getName() {
+        return ClientName;
+    }
+
+
+
+
+
+
+
+
 
     public void run ( ) {
         //try {
@@ -40,5 +58,62 @@ public class ClientThread extends Thread {
                 e.printStackTrace ( );
             }
         }
+
+        String MsgFromClient;
+        while (socket.isConnected()) {   //enviar mensagens
+            try {
+                MsgFromClient = in.readLine();
+                broadcastMsg(MsgFromClient);
+            } catch (IOException e) {
+                CloseThread(socket,in,out);
+                break;
+            }
+        }
+
     }
+
+
+    //Enviar mensagens
+    public void broadcastMsg(String message) {    //broadcast
+        for (ClientThread Client : clientThread) {
+            try {
+                if (!Client.getName.equals(this.getName())) {
+                    Client.out.write(message);
+                    Client.out.newLine();
+                    Client.out.flush();
+                }
+
+            } catch (IOException e) {
+                CloseThread(this.socket, this.in,this,out);
+            }
+
+        }
+
+    }
+
+
+    public void removeClientThread() {        //alguem saiu 
+        ClientThreads.remove(this);  //array com clients
+        broadcastMsg("SERVER:" + this.ClientName + "saiu de chat");
+    }
+
+
+    public void CloseThread(Socket socket, BufferedReader bufferedReader,  DataOutputStream dataOutputStream) {
+        removeClientThread();
+        try {
+            if(bufferedReader != NULL) {
+                bufferedReader.close();
+            }
+            if(dataOutputStream != NULL) {
+                dataOutputStream.close();
+            }
+            if(socket != NULL) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
