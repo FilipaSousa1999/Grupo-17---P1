@@ -18,14 +18,13 @@ public class ClientThread extends Thread {
     private final int id;
     //private final int freq;
     private Writer ouw;
-   private DataOutputStream out; //Enviar message
+   private OutputStream out; //Enviar message
     private BufferedReader in; //Ler message
     private Socket socket;//Connection
     private BufferedWriter bfw;
     private String send_message;
     private String receive_message;
     private String ClientName;
-    private Entra_Frame f;
     private Chat_Frame chat;
     private JFrame ver;
     private JButton ok;
@@ -34,62 +33,38 @@ public class ClientThread extends Thread {
 
     public ClientThread ( int port , int id) {
 
-        Entra_Frame f = new Entra_Frame();
-
 
         this.port = port;
         this.id = id;
-        //this.freq = freq;
         chat = new Chat_Frame();
-        chat.setClient_name(f.getName());
-
 
     }
 
 
-//Ver como enviar e receber mensagens
-
 
     public void run ( ) {
-        //try {
-        String MsgFromClient;
-        while ( true ) {
+        try {
+            // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
+            socket = new Socket ( "localhost" , port );
+            out = socket.getOutputStream(); //conection
+            ouw = new OutputStreamWriter(out);
+            bfw = new BufferedWriter(ouw);
+            bfw.flush ( );
             System.out.println ( "Sending Data" );
-            try {
-
-                // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
-                socket = new Socket ( "localhost" , port );
-                out = new DataOutputStream ( socket.getOutputStream ( ) ); //conection
-                ouw = new OutputStreamWriter(out);
-                bfw = new BufferedWriter(ouw);
-
-               // out.writeUTF ( "My message number "  + " to the server " + "I'm " + id );
-
-              //  String response; //msg
-               // response = in.readLine ( );
-
-               // System.out.println ( "From Server " + response );
-                bfw.flush ( );
-                //socket.close ( );
-                // sleep ( freq );
-
-
-                //String msg = in.readLine();
-
-                /*
-                Mes m = new Mes();
-                m.start();
-                receive_message=in.readLine();
-
-                if(receive_message.contains(send_message)) {
-                    System.out.println(receive_message);
+            listen_to_server(chat);
+            boolean i = true;
+            while (i) {
+                Action(chat);
+                try {
+                    sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-                */
-            } catch ( IOException e ) {
-                e.printStackTrace ( );
             }
-        }
 
+        } catch ( IOException e ) {
+            e.printStackTrace ( );
+        }
 
     }
 
@@ -98,15 +73,12 @@ public class ClientThread extends Thread {
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            bfw.write(msg+"/r/n");
-            chat.get_area().append(ClientName +":" + chat.getUser_msg().getText() + "\r\n");
+            bfw.write(msg+"\r\n");
+            chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
+            bfw.flush();
+            chat.getUser_msg().setText("");
         } catch (IOException e) {
-            try {
-                bfw.flush();
-                chat.getUser_msg().setText("");
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,6 +87,7 @@ public class ClientThread extends Thread {
         try {
             in = new BufferedReader ( new InputStreamReader ( socket.getInputStream ( ) ) );
             String msg = "";
+            System.out.println("Listen");
             if(in.ready()) {
                 msg = in.readLine();
             }
@@ -136,27 +109,26 @@ public class ClientThread extends Thread {
             if(this.socket != null) {
                 this.socket.close();
             }
+            chat.setVisible(false);
+            chat.dispose();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void ActionPerformed(ActionEvent e,Chat_Frame chat){
+    public void Action(Chat_Frame chat){
         try {
-            if(e.getActionCommand().equals(chat.getBtnSend()))
+            if(chat.isBtnSend_isClicked()) {
                 enviar_to_server(chat.getUser_msg().getText(), chat);
-             else
-                if(e.getActionCommand().equals(chat.getBtnExit()))
-                    CloseThread();
+                chat.setBtnSend_isClicked(false);
+            } else if(chat.isBtnExit_isClicked()){
+                CloseThread();
+                chat.setBtnExit_isClicked(false);
+            }
             } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void KeyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            enviar_to_server(chat.getUser_msg().getText(),chat );
-        }
-    }
 
 }

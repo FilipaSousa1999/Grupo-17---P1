@@ -2,28 +2,35 @@ package client.src.main.java;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Chat_Frame extends JFrame{
-
+public class Chat_Frame extends JFrame implements ActionListener {
     private String client_name;  //nome de cliente
-
     private JButton btnSend;
     private JButton btnExit;
     private JTextArea area_messegers;
-
     private JPanel panel;
     private JTextField user_msg;
-
+    private JTextField name_input;
     private JLabel lbl_user_msg;
     private JLabel buf_msg;//historico de chat
+    private boolean btnSend_isClicked;
+    private boolean btnExit_isClicked;
 
     public Chat_Frame() {
-        JFrame chat = new JFrame("chat");
-        chat.setVisible(true);
-        chat.setSize(500,500);
-        JOptionPane.showMessageDialog(null,client_name); //talvez addicionar
+
+        btnSend_isClicked = false;
+        btnExit_isClicked = false;
+
+        name_input = new JTextField("Escreve o nome");
+        Object[] texts = {name_input};
+
+        //JFrame chat = new JFrame("chat");
+
+        JOptionPane.showMessageDialog(null,texts); //talvez addicionar
 
         panel =  new JPanel();
         panel.setBackground(Color.LIGHT_GRAY);
@@ -34,21 +41,20 @@ public class Chat_Frame extends JFrame{
         btnExit.addActionListener((ActionListener) this);
 
         btnSend = new JButton("Enviar");
-        btnSend.addActionListener((ActionListener) this);
-        btnSend.addKeyListener((KeyListener) this);
+        btnSend.addActionListener(this);
 
-        user_msg = new JTextField(500);
-        user_msg.setBorder(BorderFactory.createEtchedBorder(Color.BLUE, Color.BLUE));
+        user_msg = new JTextField(50);
+        user_msg.setBorder(BorderFactory.createEtchedBorder(Color.ORANGE, Color.ORANGE));
 
         lbl_user_msg=new JLabel("Sua Mensagem");
 
-
-        area_messegers =new JTextArea(10,20);
+        client_name=name_input.getName();
+        area_messegers =new JTextArea(30,50);
         area_messegers.setEditable(false);
         JScrollPane scroll = new JScrollPane(area_messegers);
-        area_messegers.setBackground(Color.GREEN);
+        area_messegers.setBackground(Color.WHITE);
         area_messegers.setLineWrap(true);
-        area_messegers.setBorder(BorderFactory.createEtchedBorder(Color.BLUE,Color.BLUE));
+        area_messegers.setBorder(BorderFactory.createEtchedBorder(Color.GREEN,Color.GREEN));
 
 
 
@@ -59,11 +65,13 @@ public class Chat_Frame extends JFrame{
         panel.add(btnSend);
         panel.add(btnExit);
 
-
-        chat.setContentPane(panel);
-        chat.setTitle(client_name);
-        chat.setLocationRelativeTo(null);
-        chat.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600,650);
+        setContentPane(panel);
+        setTitle(name_input.getText());
+        setClient_name(name_input.getText());
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
 
@@ -93,4 +101,41 @@ public class Chat_Frame extends JFrame{
     public void Sair(ClientThread client) {
         client.CloseThread();
     }
+
+    public boolean isBtnSend_isClicked() {
+        return btnSend_isClicked;
+    }
+
+    public void setBtnSend_isClicked(boolean btnSend_isClicked) {
+        this.btnSend_isClicked = btnSend_isClicked;
+    }
+
+    public boolean isBtnExit_isClicked() {
+        return btnExit_isClicked;
+    }
+
+    public void setBtnExit_isClicked(boolean btnExit_isClicked) {
+        this.btnExit_isClicked = btnExit_isClicked;
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Enviar")) {
+            btnSend_isClicked = true;
+        } else if (e.getActionCommand().equals("Sair"))
+            btnExit_isClicked = true;
+    }
+
+    /*
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            btnSend_isClicked = true;
+        }
+    }
+    */
+
+
+
 }
