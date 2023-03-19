@@ -1,7 +1,5 @@
-package server.src.main.java;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import  jaca.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,56 +18,32 @@ import java.io.PrintWriter;
 
 public class ServerThread extends Thread {
     //Atributos estáticos
-
-    private final int quan_clintes;
-    private final int port;
     private static ArrayList<BufferedWriter> clientes;
     private String nome;
     private InputStreamReader inr;
     private BufferedReader bfr;
-    private DataInputStream in;
-    // private InputStream in;
+    private InputStream in;
     private PrintWriter out;
     private static ServerSocket server;
-  //  private Socket con;
-    private Socket socket;
-    /**
-     * Método construtor
-     *
-     * @param con do tipo Socket
+    private Socket con;
+    /**Method construtor
+     * @param con of type Socket
      */
-    /*
-    public ServerThread(Socket con) {
+    public ServerThread ( Socket con ) {
         this.con = con;
         try {
             in = con.getInputStream();
             inr = new InputStremReader();
-            bfr = new BufferedReader(inr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } */
-
-
-    public ServerThread ( int port,int quan_clintes ) {
-        this.port = port;
-        this.quan_clintes = quan_clintes;
-
-        try {
-            server = new ServerSocket ( this.port );
+            bfr = new  BufferedReader(inr);
         } catch ( IOException e ) {
             e.printStackTrace ( );
         }
     }
-
-
-
     /**
-     * Método run
-     * Qd um cliente envia uma msg, o servidor recebe e manda para todos os clientes
+     * Method run
+     * When a client sends a msg, the server receives it and sends it to all clients
      */
-    /*
-    public void run() {
+    public void run ( ) {
         try {
             String msg;
             OutputStrem ou = this.con.getOutputStream();
@@ -77,44 +51,31 @@ public class ServerThread extends Thread {
             BufferedWriter bfw = new BufferedWriter(ouw);
             clientes.add(bfw);
             nome = msg = bfr.readLine();
-            while (!"Sair".equalsIgnoreCasa(msg) && msg != null) {
-                msg = bfr.readLine();
-                sendToAll(bfw, msg);
-                System.out.println(msg);
+        while ( !"Sair" .equalsIgnoreCasa(msg) && msg!=null ) {
+          msg = bfr.readLine();
+          sendToAll(bfw, msg);
+          System.out.println(msg);
 
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-
+    } catch ( IOException e ) {
+        e.printStackTrace ( );
     }
-    */
-
-
-
-    //O codigo de professor
-    public void run ( ) {
-
-        while ( true ) {
-            try {
-                System.out.println ( "Accepting Data" );
-                socket = server.accept ( );  //Accept clients
-
-                System.out.println("Connected");
-
-
-                in = new DataInputStream ( socket.getInputStream ( ) );
-                out = new PrintWriter ( socket.getOutputStream ( ) , true );
-                String message = in.readUTF ( );
-                System.out.println ( "***** " + message + " *****" );
-                out.println ( message.toUpperCase ( ) );
-                out.println("Welcome to Server");
-            } catch ( IOException e ) {
-                e.printStackTrace ( );
-            }
+    }
+/**
+ *Method to send message to all clients
+ * @param bwSaida of type BufferedWriter
+ * @param msg of type String
+ * @throws IOException
+ */
+public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
+    BufferedWriter bwS;
+    for (BufferedWriter bw : clientes) {
+        bwS = (BufferedWriter) bw;
+        if (!(bwSaida == bwS)) {
+            bw.write(nome + " -> " + msg + "\r\n");
+            bw.flush();
         }
-
     }
-
 }
+
+
