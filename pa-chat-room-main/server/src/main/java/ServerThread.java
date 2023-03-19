@@ -60,22 +60,22 @@ public class ServerThread extends Thread {
     } catch ( IOException e ) {
         e.printStackTrace ( );
     }
+    }
 /**
  *Method to send message to all clients
  * @param bwSaida of type BufferedWriter
  * @param msg of type String
  * @throws IOException
  */
-public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException
-    {
-        BufferedWriter bwS;
-        for (BufferedWriter bw : clientes){
-            bwS = (BufferedWriter) bw;
-            if(!(bwSaida == bwS)) {
-                bw.write(nome + " -> " + msg+"\r\n");
-                bw.flush();
-            }
+public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
+    BufferedWriter bwS;
+    for (BufferedWriter bw : clientes) {
+        bwS = (BufferedWriter) bw;
+        if (!(bwSaida == bwS)) {
+            bw.write(nome + " -> " + msg + "\r\n");
+            bw.flush();
         }
     }
-    }
 }
+
+
