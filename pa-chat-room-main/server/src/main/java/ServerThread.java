@@ -1,5 +1,6 @@
+package server.src.main.java;
 import java.io.BufferedReader;
-import  jaca.io.BufferedWriter;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,10 +24,14 @@ public class ServerThread extends Thread {
     private String nome;
     private InputStreamReader inr;
     private BufferedReader bfr;
+    private BufferedReader bfr_filtro; //Para ler palavras in filtro.txt
     private InputStream in;
     private PrintWriter out;
     private static ServerSocket server;
     private Socket con;
+    private File filtro;
+    private  String[] words;
+    private FileReader fr;
     /**Method construtor
      * @param con of type Socket
      */
@@ -33,7 +39,7 @@ public class ServerThread extends Thread {
         this.con = con;
         try {
             in = con.getInputStream();
-            inr = new InputStremReader();
+            //inr = new InputStremReader();
             bfr = new  BufferedReader(inr);
         } catch ( IOException e ) {
             e.printStackTrace ( );
@@ -44,6 +50,7 @@ public class ServerThread extends Thread {
      * When a client sends a msg, the server receives it and sends it to all clients
      */
     public void run ( ) {
+        /*
         try {
             String msg;
             OutputStrem ou = this.con.getOutputStream();
@@ -60,6 +67,8 @@ public class ServerThread extends Thread {
     } catch ( IOException e ) {
         e.printStackTrace ( );
     }
+    */
+
     }
 /**
  *Method to send message to all clients
@@ -67,16 +76,17 @@ public class ServerThread extends Thread {
  * @param msg of type String
  * @throws IOException
  */
-public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
-    BufferedWriter bwS;
-    for (BufferedWriter bw : clientes) {
-        bwS = (BufferedWriter) bw;
-        if (!(bwSaida == bwS)) {
-            bw.write(nome + " -> " + msg + "\r\n");
-            bw.flush();
+    public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
+        BufferedWriter bwS;
+        for (BufferedWriter bw : clientes) {
+            bwS = (BufferedWriter) bw;
+            if (!(bwSaida == bwS)) {
+                bw.write(nome + " -> " + msg + "\r\n");
+                bw.flush();
+            }
         }
     }
-}
+    /*
     public static void conecao ( String[] args ) {
         //ServerThread server = new ServerThread ( 8888 );
         try {
@@ -100,6 +110,35 @@ public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
             e.printStackTrace();
         }
     }
+    */
+
+
+
+
+    public boolean filtro_palavras(String word_msg) throws IOException {
+        filtro = new File("filtro.txt");
+        fr = new FileReader(filtro);
+        words = null;
+        bfr_filtro = new BufferedReader(fr); //indicar pathname
+        int count =0;
+        String current_word;
+        while (count==0) {
+            while ((current_word = bfr_filtro.readLine()) != null) {
+                words = current_word.split(" ");
+                for (String i : words) {
+                    if (i.equals(word_msg)) {
+                        count++;
+                        fr.close();
+                        return true;
+                    }
+                }
+            }
+        }
+        fr.close();
+        return false;
+
+    }
+
 }
 
 
