@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -81,8 +82,20 @@ public class ServerThread extends Thread {
         for (BufferedWriter bw : clientes) {
             bwS = (BufferedWriter) bw;
             if (!(bwSaida == bwS)) {
-                bw.write(nome + " -> " + msg + "\r\n");
+                String[] msg_words = msg.split(" ");
+                StringBuffer msg_buf = new StringBuffer();
+                int b= 0; // numero de palavra em mennsagem
+                for (String word : msg_words) {
+                    if(!filtro_palavras(word)) { //if false
+                        msg_words[b] = "****";
+                    }
+                    msg_buf.append(msg_words[b]);
+                    b++;
+                }
+                String msg_final = msg_buf.toString();
+                bw.write(nome + " : " + msg_final + "\r\n");
                 bw.flush();
+                msg_buf.delete(0,msg_buf.length());
             }
         }
     }
