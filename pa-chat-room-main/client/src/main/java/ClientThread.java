@@ -74,6 +74,7 @@ public class ClientThread extends Thread {
         try
         {
             bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
             bfw.flush();
             chat.getUser_msg().setText("");

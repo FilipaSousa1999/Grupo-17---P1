@@ -66,9 +66,11 @@ public class ServerThread extends Thread {
             clientes.add(bfw);
             msg = bfr.readLine();
 
-        while ( msg!=null) {
+        while (msg!=null && msg!="") {
             sendToAll(msg);
         }
+
+
     } catch ( IOException e ) {
         e.printStackTrace ( );
     }
