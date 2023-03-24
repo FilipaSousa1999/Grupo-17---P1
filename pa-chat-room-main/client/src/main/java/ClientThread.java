@@ -91,7 +91,7 @@ public class ClientThread extends Thread {
             if(in.ready()) {
                 msg = in.readLine();
                 if (!(msg==null))
-                chat.get_area().append(msg+"\r\n");
+                    chat.get_area().append(msg+"\r\n");
                 msg=null;
             }
 
