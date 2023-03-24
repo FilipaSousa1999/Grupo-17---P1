@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 
 public class ServerThread extends Thread {
     //Atributos estáticos
+    private final int port;
     private static ArrayList<BufferedWriter> clientes;
     private String nome;
     private InputStreamReader inr;
@@ -29,19 +30,24 @@ public class ServerThread extends Thread {
     private InputStream in;
     private PrintWriter out;
     private static ServerSocket server;
-    private Socket con;
+    private Socket socket;
     private File filtro;
     private  String[] words;
     private FileReader fr;
     /**Method construtor
-     * @param con of type Socket
+     * @param port of type Socket
      */
-    public ServerThread ( Socket con ) {
-        this.con = con;
+    public ServerThread ( int port ) {
+        this.port = port;
         try {
-            in = con.getInputStream();
-            //inr = new InputStremReader();
-            bfr = new  BufferedReader(inr);
+            clientes = new ArrayList<BufferedWriter>();
+            server = new ServerSocket(this.port);
+            System.out.println ( "Accepting Data" );
+            socket = server.accept ( );
+            in  = socket.getInputStream();
+            inr = new InputStreamReader(in);
+            bfr = new BufferedReader(inr);
+
         } catch ( IOException e ) {
             e.printStackTrace ( );
         }
@@ -51,79 +57,51 @@ public class ServerThread extends Thread {
      * When a client sends a msg, the server receives it and sends it to all clients
      */
     public void run ( ) {
-        /*
         try {
+
             String msg;
-            OutputStrem ou = this.con.getOutputStream();
-            Writter ouw = new OutputStreamWriter(ou);
+            OutputStream ou = this.socket.getOutputStream();
+            Writer ouw = new OutputStreamWriter(ou);
             BufferedWriter bfw = new BufferedWriter(ouw);
             clientes.add(bfw);
-            nome = msg = bfr.readLine();
-        while ( !"Sair" .equalsIgnoreCasa(msg) && msg!=null ) {
-          msg = bfr.readLine();
-          sendToAll(bfw, msg);
-          System.out.println(msg);
+            msg = bfr.readLine();
 
+        while ( msg!=null) {
+            sendToAll(msg);
         }
     } catch ( IOException e ) {
         e.printStackTrace ( );
     }
-    */
 
     }
 /**
  *Method to send message to all clients
- * @param bwSaida of type BufferedWriter
  * @param msg of type String
  * @throws IOException
  */
-    public void sendToAll(BufferedWriter bwSaida, String msg) throws IOException {
-        BufferedWriter bwS;
-        for (BufferedWriter bw : clientes) {
-            bwS = (BufferedWriter) bw;
-            if (!(bwSaida == bwS)) {
-                String[] msg_words = msg.split(" ");
-                StringBuffer msg_buf = new StringBuffer();
-                int b= 0; // numero de palavra em mennsagem
-                for (String word : msg_words) {
-                    if(!filtro_palavras(word)) { //if false
-                        msg_words[b] = "****";
-                    }
-                    msg_buf.append(msg_words[b]);
-                    b++;
-                }
-                String msg_final = msg_buf.toString();
-                bw.write(nome + " : " + msg_final + "\r\n");
-                bw.flush();
-                msg_buf.delete(0,msg_buf.length());
-            }
-        }
-    }
-    /*
-    public static void conecao ( String[] args ) {
-        //ServerThread server = new ServerThread ( 8888 );
-        try {
-            //creates the objects to instantiate the server
-            JLabel lblMessage = new JLabel ("Porta do servidor: ");
-            JTextField txtPorta = new JTextField("8888");
-            Object[] texts = {lblMessage, txtPorta};
-            JOptionPane.showMessageDialog(null, texts);
-            server = new ServerSocket(Integer.parseInt(txtPorta.getTest()));
-            clientes = new ArrayList<BufferedWriter>();
-            JOptionPane.showMessage(null, "Servidor ativo na porta: ")+txtPorta.getText());
+    public void sendToAll(String msg) throws IOException {
 
-            while (true){
-                System.out.println("Aguardar conexão...");
-                Socket con = server.accept();
-                System.out.println ("Cliente conetado...");
-                Thread t = new Servidor (con);
-                t.start();
+        for (BufferedWriter bw : clientes) {
+            //String[] msg_words = msg.split(" ");
+            //StringBuffer msg_buf = new StringBuffer();
+            //int b= 0; // numero de palavra em mennsagem
+           // for (String word : msg_words) {
+               // if(!filtro_palavras(word)) { //if false
+             //       msg_words[b] = "****";
+              //  }
+              //      msg_buf.append(msg_words[b]);
+              //      b++;
+             //   }
+            //String msg_final = msg_buf.toString();
+            if (!(msg==null)) {
+                bw.write(msg + "\r\n");
+                msg = null;
+                bw.newLine();
+                bw.flush();
             }
-        }catch (Exception e) {
-            e.printStackTrace();
+          //  msg_buf.delete(0,msg_buf.length());
         }
     }
-    */
 
 
 

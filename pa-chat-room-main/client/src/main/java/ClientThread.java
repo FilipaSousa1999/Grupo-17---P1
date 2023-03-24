@@ -51,10 +51,10 @@ public class ClientThread extends Thread {
             bfw = new BufferedWriter(ouw);
             bfw.flush ( );
             System.out.println ( "Sending Data" );
-            listen_to_server(chat);
             boolean i = true;
             while (i) {
                 Action(chat);
+                listen_to_server(chat);
                 try {
                     sleep(10);
                 } catch (InterruptedException e) {
@@ -73,8 +73,8 @@ public class ClientThread extends Thread {
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            bfw.write(msg+"\r\n");
-            chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
+            bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
             bfw.flush();
             chat.getUser_msg().setText("");
         } catch (IOException e) {
@@ -87,11 +87,13 @@ public class ClientThread extends Thread {
         try {
             in = new BufferedReader ( new InputStreamReader ( socket.getInputStream ( ) ) );
             String msg = "";
-            System.out.println("Listen");
             if(in.ready()) {
                 msg = in.readLine();
+                if (!(msg==null))
+                chat.get_area().append(msg+"\r\n");
+                msg=null;
             }
-            chat.get_area().append(msg+"\r\n");
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
