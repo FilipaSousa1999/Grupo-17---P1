@@ -1,19 +1,9 @@
 package server.src.main.java;
-import client.src.main.java.ClientThread;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.io.PrintWriter;
 
 
 public class ServerThread extends Thread {
@@ -32,7 +22,7 @@ public class ServerThread extends Thread {
     private  String[] words;
     private FileReader fr;
     /**Method construtor
-     * @param port of type Socket
+     * @param con of type Socket
      */
     public ServerThread(Socket con, ArrayList<ServerThread> threads){
         this.con = con;
@@ -62,8 +52,10 @@ public class ServerThread extends Thread {
                     msg = "";
                     while (msg != null) {
                         msg = bfr.readLine();
-                        sendToAll(msg);
-                        System.out.println(msg);
+                        if (msg!=null) {
+                            sendToAll(msg);
+                            System.out.println(msg);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -78,10 +70,9 @@ public class ServerThread extends Thread {
      * @throws IOException
      */
     public void sendToAll( String msg) throws IOException {
-        for (ServerThread sT : threadList) {
+        for (ServerThread sT : threadList)
             sT.out.println(msg);
-            }
-        }
+    }
 
 
 
