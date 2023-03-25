@@ -38,6 +38,8 @@ public class ClientThread extends Thread {
         this.id = id;
         chat = new Chat_Frame();
 
+        chat.set_area("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
+
     }
 
 
@@ -49,7 +51,6 @@ public class ClientThread extends Thread {
                 out = socket.getOutputStream();
                 ouw = new OutputStreamWriter(out);
                 bfw = new BufferedWriter(ouw);
-                //chat.get_area().append("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
                 bfw.flush();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -68,9 +69,9 @@ public class ClientThread extends Thread {
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            //bfw.write(chat.getClient_name()+":"+msg+"\r\n");
-            bfw.write(msg+"\r\n");
-            bfw.newLine();
+            bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            //bfw.write(msg+"\r\n");
+            //bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
             bfw.flush();
             chat.getUser_msg().setText("");
@@ -86,8 +87,8 @@ public class ClientThread extends Thread {
             String msg_print = "";
             if(in.ready()) {
                 msg_print = in.readLine();
-                //if (!(msg_print==null))
-                chat.get_area().append(msg_print+"\r\n");
+                if (!(msg_print==null))
+                    chat.set_area(msg_print+"\r\n");
                 //msg_print=null;
                 //in.close();
             }

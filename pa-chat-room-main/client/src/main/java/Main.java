@@ -12,7 +12,7 @@ public class Main {
        client.start();
 
        //ClientThread client2 = new ClientThread ( 8888 , 2);
-       //client2.start ( );
+       //client2.start();
 
        // ClientThread client3 = new ClientThread ( 8888 , 3);
        // client3.start ( );

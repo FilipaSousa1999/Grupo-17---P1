@@ -80,8 +80,8 @@ public class Chat_Frame extends JFrame implements ActionListener {
     }
 
 
-    public JTextArea get_area() {
-        return area_messegers;
+    public void set_area(String let) {
+        this.area_messegers.append(let);
     }
     public JTextField getUser_msg() {
         return user_msg;

@@ -47,6 +47,8 @@ public class ServerThread extends Thread {
             inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
 
+
+
         } catch ( IOException e ) {
             e.printStackTrace ( );
         }
@@ -63,7 +65,7 @@ public class ServerThread extends Thread {
             Writer ouw = new OutputStreamWriter(ou);
             BufferedWriter bfw = new BufferedWriter(ouw);
             clientes.add(bfw);
-            nome = msg = bfr.readLine();
+            msg="";
             while (msg!=null) {
                 msg = bfr.readLine();
                 sendToAll(msg);
@@ -95,7 +97,8 @@ public class ServerThread extends Thread {
                  //   }
                 //String msg_final = msg_buf.toString();
                 if (!(msg==null)) {
-                    bw.write(nome + ": "+ msg + "\r\n");
+                    //bw.write(nome + ": "+ msg + "\r\n");
+                    bw.write( msg + "\r\n");
                     bw.flush();
                 }
               //  msg_buf.delete(0,msg_buf.length());
