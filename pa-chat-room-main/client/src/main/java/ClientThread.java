@@ -1,16 +1,8 @@
 package client.src.main.java;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
-import java.io.Writer;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 public class ClientThread extends Thread {
 
@@ -61,8 +53,8 @@ public class ClientThread extends Thread {
         // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
         System.out.println("Sending Data");
         while (true) {
-            Action(chat);
             listen_to_server(chat);
+            Action(chat);
         }
 
 
@@ -97,22 +89,18 @@ public class ClientThread extends Thread {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            CloseThread();
         }
     }
 
 
     public void CloseThread() {
         try {
-            if(this.in != null) {
-                this.in.close();
-            }
-            if(this.out != null) {
-                this.out.close();
-            }
-            if(this.socket != null) {
-                this.socket.close();
-            }
+            this.bfw.close();
+            this.ouw.close();
+            this.out.close();
+            this.in.close();
+            this.socket.close();
             chat.setVisible(false);
             chat.dispose();
         } catch (IOException e) {
