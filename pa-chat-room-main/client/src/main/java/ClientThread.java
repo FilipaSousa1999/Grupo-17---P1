@@ -43,37 +43,33 @@ public class ClientThread extends Thread {
 
 
     public void run ( ) {
-        try {
+
+            try {
+                socket = new Socket("localhost", port);
+                out = socket.getOutputStream();
+                ouw = new OutputStreamWriter(out);
+                bfw = new BufferedWriter(ouw);
+                //chat.get_area().append("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
+                bfw.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
-            socket = new Socket ( "localhost" , port );
-            out = socket.getOutputStream(); //conection
-            ouw = new OutputStreamWriter(out);
-            bfw = new BufferedWriter(ouw);
-            bfw.flush ( );
-            System.out.println ( "Sending Data" );
-            boolean i = true;
-            while (i) {
+            System.out.println("Sending Data");
+            while (true) {
                 Action(chat);
                 listen_to_server(chat);
-                try {
-                    sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
 
-        } catch ( IOException e ) {
-            e.printStackTrace ( );
-        }
 
     }
-
 
 
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            //bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            bfw.write(msg+"\r\n");
             bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
             bfw.flush();
@@ -87,12 +83,13 @@ public class ClientThread extends Thread {
     public void listen_to_server(Chat_Frame chat) {
         try {
             in = new BufferedReader ( new InputStreamReader ( socket.getInputStream ( ) ) );
-            String msg = "";
+            String msg_print = "";
             if(in.ready()) {
-                msg = in.readLine();
-                if (!(msg==null))
-                    chat.get_area().append(msg+"\r\n");
-                msg=null;
+                msg_print = in.readLine();
+                //if (!(msg_print==null))
+                chat.get_area().append(msg_print+"\r\n");
+                //msg_print=null;
+                //in.close();
             }
 
         } catch (IOException e) {

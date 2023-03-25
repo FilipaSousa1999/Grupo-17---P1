@@ -1,7 +1,6 @@
 package server.src.main.java;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,13 +8,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import java.io.PrintWriter;
 
 
@@ -40,10 +35,14 @@ public class ServerThread extends Thread {
     public ServerThread ( int port ) {
         this.port = port;
         try {
-            clientes = new ArrayList<BufferedWriter>();
+            clientes = new ArrayList<>();
             server = new ServerSocket(this.port);
-            System.out.println ( "Accepting Data" );
+            System.out.println("O servidor está online, aguardando conexões...");
+
             socket = server.accept ( );
+            System.out.println("Cliente conectou ao servidor.");
+
+
             in  = socket.getInputStream();
             inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
@@ -60,16 +59,16 @@ public class ServerThread extends Thread {
         try {
 
             String msg;
-            OutputStream ou = this.socket.getOutputStream();
+            OutputStream ou = socket.getOutputStream();
             Writer ouw = new OutputStreamWriter(ou);
             BufferedWriter bfw = new BufferedWriter(ouw);
             clientes.add(bfw);
-            msg = bfr.readLine();
-
-        while (msg!=null && msg!="") {
-            sendToAll(msg);
-        }
-
+            nome = msg = bfr.readLine();
+            while (msg!=null) {
+                msg = bfr.readLine();
+                sendToAll(msg);
+                System.out.println(msg);
+            }
 
     } catch ( IOException e ) {
         e.printStackTrace ( );
@@ -81,31 +80,28 @@ public class ServerThread extends Thread {
  * @param msg of type String
  * @throws IOException
  */
-    public void sendToAll(String msg) throws IOException {
-
+    public void sendToAll( String msg) throws IOException {
+        BufferedWriter bfa_writer;
         for (BufferedWriter bw : clientes) {
-            //String[] msg_words = msg.split(" ");
-            //StringBuffer msg_buf = new StringBuffer();
-            //int b= 0; // numero de palavra em mennsagem
-           // for (String word : msg_words) {
-               // if(!filtro_palavras(word)) { //if false
-             //       msg_words[b] = "****";
-              //  }
-              //      msg_buf.append(msg_words[b]);
-              //      b++;
-             //   }
-            //String msg_final = msg_buf.toString();
-            if (!(msg==null)) {
-                bw.write(msg + "\r\n");
-                msg = null;
-                bw.newLine();
-                bw.flush();
-            }
-          //  msg_buf.delete(0,msg_buf.length());
+                //String[] msg_words = msg.split(" ");
+                //StringBuffer msg_buf = new StringBuffer();
+                //int b= 0; // numero de palavra em mennsagem
+               // for (String word : msg_words) {
+                   // if(!filtro_palavras(word)) { //if false
+                 //       msg_words[b] = "****";
+                  //  }
+                  //      msg_buf.append(msg_words[b]);
+                  //      b++;
+                 //   }
+                //String msg_final = msg_buf.toString();
+                if (!(msg==null)) {
+                    bw.write(nome + ": "+ msg + "\r\n");
+                    bw.flush();
+                }
+              //  msg_buf.delete(0,msg_buf.length());
         }
+
     }
-
-
 
 
     public boolean filtro_palavras(String word_msg) throws IOException {
@@ -131,6 +127,14 @@ public class ServerThread extends Thread {
         return false;
 
     }
+
+    public void server_log(String msg) {
+
+    }
+
+
+
+
 
 }
 
