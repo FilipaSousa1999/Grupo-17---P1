@@ -56,7 +56,7 @@ public class ServerThread extends Thread {
                                 System.out.println(word);
                                 //System.out.println(filtro_palavras(word)+" LOGIC IS");
                                 if(filtro_palavras(word)) { //if true word in filtro
-                                    msg = new_msg.replace("ban","*****");
+                                    msg = new_msg.replace(word,"*****");
                                     System.out.println(word + " THIS WORD WAS CHECKED");
                                 }
                             }
@@ -100,6 +100,7 @@ public class ServerThread extends Thread {
             for (String i : words) {
                 if (i.equals(word_msg)) {
                     fr.close();
+                    System.out.println(i);
                     System.out.println("BAN THIS WORD");
                     return true;
                 } else
