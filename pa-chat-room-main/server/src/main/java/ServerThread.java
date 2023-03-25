@@ -1,4 +1,6 @@
 package server.src.main.java;
+import client.src.main.java.ClientThread;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,8 +18,8 @@ import java.io.PrintWriter;
 
 public class ServerThread extends Thread {
     //Atributos estáticos
-    private final int port;
-    private static ArrayList<BufferedWriter> clientes;
+    //private final int port;
+    private static ArrayList<ServerThread> threadList;
     private String nome;
     private InputStreamReader inr;
     private BufferedReader bfr;
@@ -25,86 +27,62 @@ public class ServerThread extends Thread {
     private InputStream in;
     private PrintWriter out;
     private static ServerSocket server;
-    private Socket socket;
+    private Socket con;
     private File filtro;
     private  String[] words;
     private FileReader fr;
     /**Method construtor
      * @param port of type Socket
      */
-    public ServerThread ( int port ) {
-        this.port = port;
+    public ServerThread(Socket con, ArrayList<ServerThread> threads){
+        this.con = con;
+        this.threadList = threads;
         try {
-            clientes = new ArrayList<>();
-            server = new ServerSocket(this.port);
-            System.out.println("O servidor está online, aguardando conexões...");
-
-            socket = server.accept ( );
-            System.out.println("Cliente conectou ao servidor.");
-
-
-            in  = socket.getInputStream();
+            in  = con.getInputStream();
             inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
-
-
-
-        } catch ( IOException e ) {
-            e.printStackTrace ( );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
     /**
      * Method run
      * When a client sends a msg, the server receives it and sends it to all clients
      */
     public void run ( ) {
         try {
+                out = new PrintWriter(con.getOutputStream(),true);
 
-            String msg;
-            OutputStream ou = socket.getOutputStream();
-            Writer ouw = new OutputStreamWriter(ou);
-            BufferedWriter bfw = new BufferedWriter(ouw);
-            clientes.add(bfw);
-            msg="";
-            while (msg!=null) {
-                msg = bfr.readLine();
-                sendToAll(msg);
-                System.out.println(msg);
+                while (true) {
+                    String msg;
+                    OutputStream ou = con.getOutputStream();
+                    Writer ouw = new OutputStreamWriter(ou);
+                    BufferedWriter bfw = new BufferedWriter(ouw);
+                    msg = "";
+                    while (msg != null) {
+                        msg = bfr.readLine();
+                        sendToAll(msg);
+                        System.out.println(msg);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-    } catch ( IOException e ) {
-        e.printStackTrace ( );
-    }
-
-    }
-/**
- *Method to send message to all clients
- * @param msg of type String
- * @throws IOException
- */
-    public void sendToAll( String msg) throws IOException {
-        BufferedWriter bfa_writer;
-        for (BufferedWriter bw : clientes) {
-                //String[] msg_words = msg.split(" ");
-                //StringBuffer msg_buf = new StringBuffer();
-                //int b= 0; // numero de palavra em mennsagem
-               // for (String word : msg_words) {
-                   // if(!filtro_palavras(word)) { //if false
-                 //       msg_words[b] = "****";
-                  //  }
-                  //      msg_buf.append(msg_words[b]);
-                  //      b++;
-                 //   }
-                //String msg_final = msg_buf.toString();
-                if (!(msg==null)) {
-                    //bw.write(nome + ": "+ msg + "\r\n");
-                    bw.write( msg + "\r\n");
-                    bw.flush();
-                }
-              //  msg_buf.delete(0,msg_buf.length());
         }
 
-    }
+    /**
+     *Method to send message to all clients
+     * @param msg of type String
+     * @throws IOException
+     */
+    public void sendToAll( String msg) throws IOException {
+        for (ServerThread sT : threadList) {
+            sT.out.println(msg);
+            }
+        }
+
 
 
     public boolean filtro_palavras(String word_msg) throws IOException {

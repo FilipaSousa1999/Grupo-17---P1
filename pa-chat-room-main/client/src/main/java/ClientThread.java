@@ -18,7 +18,7 @@ public class ClientThread extends Thread {
     private final int id;
     //private final int freq;
     private Writer ouw;
-   private OutputStream out; //Enviar message
+    private OutputStream out; //Enviar message
     private BufferedReader in; //Ler message
     private Socket socket;//Connection
     private BufferedWriter bfw;
@@ -43,24 +43,27 @@ public class ClientThread extends Thread {
     }
 
 
+    public BufferedWriter getBfw() {
+        return bfw;
+    }
 
     public void run ( ) {
 
-            try {
-                socket = new Socket("localhost", port);
-                out = socket.getOutputStream();
-                ouw = new OutputStreamWriter(out);
-                bfw = new BufferedWriter(ouw);
-                bfw.flush();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
-            System.out.println("Sending Data");
-            while (true) {
-                Action(chat);
-                listen_to_server(chat);
-            }
+        try {
+            socket = new Socket("localhost", port);
+            out = socket.getOutputStream();
+            ouw = new OutputStreamWriter(out);
+            bfw = new BufferedWriter(ouw);
+            bfw.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // if(sem.tryAcquire(1, TimeUnit.SECONDS)) {
+        System.out.println("Sending Data");
+        while (true) {
+            Action(chat);
+            listen_to_server(chat);
+        }
 
 
     }
@@ -126,7 +129,7 @@ public class ClientThread extends Thread {
                 CloseThread();
                 chat.setBtnExit_isClicked(false);
             }
-            } catch (Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
