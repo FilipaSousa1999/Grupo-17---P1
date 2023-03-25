@@ -64,7 +64,7 @@ public class ClientThread extends Thread {
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            bfw.write(chat.getClient_name()+": "+msg+"\r\n");
             //bfw.write(msg+"\r\n");
             //bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");

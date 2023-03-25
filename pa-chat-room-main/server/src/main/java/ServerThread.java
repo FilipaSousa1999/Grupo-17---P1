@@ -13,14 +13,11 @@ public class ServerThread extends Thread {
     private String nome;
     private InputStreamReader inr;
     private BufferedReader bfr;
-    private BufferedReader bfr_filtro; //Para ler palavras in filtro.txt
     private InputStream in;
     private PrintWriter out;
     private static ServerSocket server;
     private Socket con;
-    private File filtro;
-    private  String[] words;
-    private FileReader fr;
+
     /**Method construtor
      * @param con of type Socket
      */
@@ -52,7 +49,17 @@ public class ServerThread extends Thread {
                     msg = "";
                     while (msg != null) {
                         msg = bfr.readLine();
+                        String new_msg=msg;
                         if (msg!=null) {
+                            String[] sentence = new_msg.split(" ",0);
+                            for (String word : sentence) {
+                                System.out.println(word);
+                                //System.out.println(filtro_palavras(word)+" LOGIC IS");
+                                if(filtro_palavras(word)) { //if true word in filtro
+                                    msg = new_msg.replace("ban","*****");
+                                    System.out.println(word + " THIS WORD WAS CHECKED");
+                                }
+                            }
                             sendToAll(msg);
                             System.out.println(msg);
                         }
@@ -76,25 +83,29 @@ public class ServerThread extends Thread {
 
 
 
+    /**
+     * @param word_msg entrada de palavra em mensagem
+     * @return  true se a palavra fica em filtro
+     * @throws IOException
+     */
     public boolean filtro_palavras(String word_msg) throws IOException {
-        filtro = new File("filtro.txt");
-        fr = new FileReader(filtro);
-        words = null;
-        bfr_filtro = new BufferedReader(fr); //indicar pathname
-        int count =0;
-        String current_word;
-        while (count==0) {
-            while ((current_word = bfr_filtro.readLine()) != null) {
-                words = current_word.split(" ");
-                for (String i : words) {
-                    if (i.equals(word_msg)) {
-                        count++;
-                        fr.close();
-                        return true;
-                    }
+        System.out.println("IM CHECKING THIS WORD:  !"+word_msg+"!");
+        File filtro = new File("C:\\Users\\Vasily Frolov\\Documents\\GitHub\\Grupo-17---P1\\pa-chat-room-main\\server\\filtro.txt");
+        FileReader fr = new FileReader(filtro);
+        String[] words = null; //array
+        BufferedReader bfr_filtro = new BufferedReader(fr); //indicar pathname
+        String current_line;
+        while ((current_line = bfr_filtro.readLine()) != null) {
+            words = current_line.split(" ");
+            for (String i : words) {
+                if (i.equals(word_msg)) {
+                    fr.close();
+                    System.out.println("BAN THIS WORD");
+                    return true;
+                } else
+                    System.out.println("THIS WORD IS OK");
                 }
             }
-        }
         fr.close();
         return false;
 
