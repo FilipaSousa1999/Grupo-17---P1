@@ -85,30 +85,37 @@ public class ServerThread extends Thread {
     public void sendToAll( String msg) throws IOException {
         BufferedWriter bfa_writer;
         for (BufferedWriter bw : clientes) {
-                //String[] msg_words = msg.split(" ");
-                //StringBuffer msg_buf = new StringBuffer();
-                //int b= 0; // numero de palavra em mennsagem
-               // for (String word : msg_words) {
-                   // if(!filtro_palavras(word)) { //if false
-                 //       msg_words[b] = "****";
-                  //  }
-                  //      msg_buf.append(msg_words[b]);
-                  //      b++;
-                 //   }
-                //String msg_final = msg_buf.toString();
+                String[] msg_words = msg.split(" ");
+                StringBuffer msg_buf = new StringBuffer();
+                int b= 0; // numero de palavra em mennsagem
+                for (String word : msg_words) {
+                    if(!filtro_palavras(word)) { //if false
+                               msg.replaceAll("word","****");
+                        }
+                    msg_buf.append(" " + msg_words[b] + " ");
+                    b++;
+                }
+                String msg_final = msg_buf.toString();
                 if (!(msg==null)) {
                     //bw.write(nome + ": "+ msg + "\r\n");
                     bw.write( msg + "\r\n");
                     bw.flush();
                 }
-              //  msg_buf.delete(0,msg_buf.length());
+                        //  msg_buf.delete(0,msg_buf.length());
         }
+
 
     }
 
 
+    /**
+     * Verificar se palavra fica em file
+     * @param word_msg palavra que nos recebemos
+     * @return A verdadeira se palavra fica dentro file
+     * @throws IOException
+     */
     public boolean filtro_palavras(String word_msg) throws IOException {
-        filtro = new File("filtro.txt");
+        filtro = new File("C:\\Users\\Vasily Frolov\\Documents\\GitHub\\Grupo-17---P1\\pa-chat-room-main\\server\\filtro.txt");
         fr = new FileReader(filtro);
         words = null;
         bfr_filtro = new BufferedReader(fr); //indicar pathname

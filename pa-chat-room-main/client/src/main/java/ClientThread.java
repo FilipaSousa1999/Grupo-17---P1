@@ -1,16 +1,8 @@
 package client.src.main.java;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
-import java.io.Writer;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 public class ClientThread extends Thread {
 
@@ -36,9 +28,9 @@ public class ClientThread extends Thread {
 
         this.port = port;
         this.id = id;
-        chat = new Chat_Frame();
+        this.chat = new Chat_Frame();
 
-        chat.set_area("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
+        this.chat.set_area("SERVER: Bem-vindo " + this.chat.getClient_name() + "\r\n");
 
     }
 
@@ -69,7 +61,7 @@ public class ClientThread extends Thread {
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
-            bfw.write(chat.getClient_name()+":"+msg+"\r\n");
+            bfw.write(chat.getClient_name()+": "+msg+"\r\n");
             //bfw.write(msg+"\r\n");
             //bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
