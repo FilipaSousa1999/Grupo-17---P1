@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.net.URL;
 
 
 public class ServerThread extends Thread {
@@ -90,7 +91,7 @@ public class ServerThread extends Thread {
      */
     public boolean filtro_palavras(String word_msg) throws IOException {
         System.out.println("IM CHECKING THIS WORD:  !"+word_msg+"!");
-        File filtro = new File("C:\\Users\\Vasily Frolov\\Documents\\GitHub\\Grupo-17---P1\\pa-chat-room-main\\server\\filtro.txt");
+        File filtro = new File("./pa-chat-room-main/server/filtro.txt");
         FileReader fr = new FileReader(filtro);
         String[] words = null; //array
         BufferedReader bfr_filtro = new BufferedReader(fr); //indicar pathname
