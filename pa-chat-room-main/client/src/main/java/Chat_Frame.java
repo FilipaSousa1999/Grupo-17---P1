@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class Chat_Frame extends JFrame implements ActionListener {
     private String client_name;  //nome de cliente
@@ -119,6 +117,9 @@ public class Chat_Frame extends JFrame implements ActionListener {
     }
 
 
+    /** Se nos temos evento, obtemos true
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Enviar")) {
