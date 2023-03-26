@@ -30,8 +30,6 @@ public class ClientThread extends Thread {
         this.id = id;
         chat = new Chat_Frame();
 
-        chat.set_area("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
-
     }
 
 
@@ -43,6 +41,7 @@ public class ClientThread extends Thread {
 
         try {
             socket = new Socket("localhost", port);
+            chat.set_area("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
             out = socket.getOutputStream();
             ouw = new OutputStreamWriter(out);
             bfw = new BufferedWriter(ouw);
@@ -55,6 +54,9 @@ public class ClientThread extends Thread {
         while (true) {
             listen_to_server(chat);
             Action(chat);
+            if (socket.isClosed()) {
+                return;
+            }
         }
 
 
@@ -96,6 +98,7 @@ public class ClientThread extends Thread {
 
     public void CloseThread() {
         try {
+            bfw.write(chat.getClient_name()+" has left! \r\n");
             this.bfw.close();
             this.ouw.close();
             this.out.close();

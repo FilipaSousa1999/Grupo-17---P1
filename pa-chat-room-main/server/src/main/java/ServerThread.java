@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.net.URL;
+import java.util.concurrent.Semaphore;
 
 
 public class ServerThread extends Thread {
@@ -18,13 +19,15 @@ public class ServerThread extends Thread {
     private PrintWriter out;
     private static ServerSocket server;
     private Socket con;
+    private static Semaphore semaphore;
 
     /**Method construtor
      * @param con of type Socket
      */
-    public ServerThread(Socket con, ArrayList<ServerThread> threads){
+    public ServerThread(Socket con, ArrayList<ServerThread> threads, Semaphore semaphore){
         this.con = con;
         this.threadList = threads;
+        this.semaphore = semaphore;
         try {
             in  = con.getInputStream();
             inr = new InputStreamReader(in);
@@ -48,23 +51,29 @@ public class ServerThread extends Thread {
                     Writer ouw = new OutputStreamWriter(ou);
                     BufferedWriter bfw = new BufferedWriter(ouw);
                     msg = "";
-                    while (msg != null) {
-                        msg = bfr.readLine();
-                        String new_msg=msg;
-                        if (msg!=null) {
-                            String[] sentence = new_msg.split(" ",0);
+                    msg = bfr.readLine();
+                    String new_msg = msg;
+                    if (msg != null) {
+                        if (msg.contains("left!")) {
+                            sendToAll(msg);
+                            semaphore.release();
+                            threadList.remove(this);
+                            return;
+                        } else {
+                            String[] sentence = new_msg.split(" ", 0);
                             for (String word : sentence) {
                                 System.out.println(word);
                                 //System.out.println(filtro_palavras(word)+" LOGIC IS");
-                                if(filtro_palavras(word)) { //if true word in filtro
-                                    msg = new_msg.replace(word,"*****");
+                                if (filtro_palavras(word)) { //if true word in filtro
+                                    msg = new_msg.replace(word, "*****");
                                     System.out.println(word + " THIS WORD WAS CHECKED");
                                 }
                             }
-                            sendToAll(msg);
-                            System.out.println(msg);
                         }
+                        sendToAll(msg);
+                        System.out.println(msg);
                     }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
