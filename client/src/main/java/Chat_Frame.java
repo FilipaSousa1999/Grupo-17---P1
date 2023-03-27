@@ -1,11 +1,9 @@
-package client.src.main.java;
+package main.java;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class Chat_Frame extends JFrame implements ActionListener {
     private String client_name;  //nome de cliente
@@ -16,7 +14,7 @@ public class Chat_Frame extends JFrame implements ActionListener {
     private JTextField user_msg;
     private JTextField name_input;
     private JLabel lbl_user_msg;
-    private JLabel buf_msg;//historico de chat
+    private JLabel buf_msg;
     private boolean btnSend_isClicked;
     private boolean btnExit_isClicked;
 
@@ -27,8 +25,6 @@ public class Chat_Frame extends JFrame implements ActionListener {
 
         name_input = new JTextField("Escreve o nome");
         Object[] texts = {name_input};
-
-        //JFrame chat = new JFrame("chat");
 
         JOptionPane.showMessageDialog(null,texts); //talvez addicionar
 
@@ -80,8 +76,8 @@ public class Chat_Frame extends JFrame implements ActionListener {
     }
 
 
-    public JTextArea get_area() {
-        return area_messegers;
+    public void set_area(String let) {
+        this.area_messegers.append(let);
     }
     public JTextField getUser_msg() {
         return user_msg;
@@ -119,6 +115,9 @@ public class Chat_Frame extends JFrame implements ActionListener {
     }
 
 
+    /** Se nos temos evento, obtemos true
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Enviar")) {
@@ -126,15 +125,6 @@ public class Chat_Frame extends JFrame implements ActionListener {
         } else if (e.getActionCommand().equals("Sair"))
             btnExit_isClicked = true;
     }
-
-    /*
-    @Override
-    public void keyTyped(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER){
-            btnSend_isClicked = true;
-        }
-    }
-    */
 
 
 
