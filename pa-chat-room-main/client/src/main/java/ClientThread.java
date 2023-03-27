@@ -30,15 +30,21 @@ public class ClientThread extends Thread {
         this.id = id;
         chat = new Chat_Frame();
 
-        chat.set_area("SERVER: Bem-vindo " + chat.getClient_name() + "\r\n");
+
 
     }
 
+    public String  get_id() {
+        return String.valueOf(this.id);
+    }
 
     public BufferedWriter getBfw() {
         return bfw;
     }
 
+    /**
+     * Method run where client send and recieve messagers from serverand also its chat
+     */
     public void run ( ) {
 
         try {
@@ -47,6 +53,7 @@ public class ClientThread extends Thread {
             ouw = new OutputStreamWriter(out);
             bfw = new BufferedWriter(ouw);
             bfw.flush();
+            enviar_to_server("SERVER: Bem-vindo " + chat.getClient_name(), this.chat, "CONNECTION", get_id());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -61,14 +68,19 @@ public class ClientThread extends Thread {
     }
 
 
-    /** funcao serve para enviar mennsagens ao server
-     * @param msg message que nos vamos enviar
-     * @param chat frame de chat que nos utilizanos
+    /** function where client can send messages
+     * @param msg message that wi will send
+     * @param chat we get name of client from chat
+     * @param type type of message that function sends
+     * @param id id of client that function sends
      */
-    public void enviar_to_server(String msg, Chat_Frame chat) {
+    public void enviar_to_server(String msg, Chat_Frame chat,String type, String id ) {
         try
         {
-            bfw.write(chat.getClient_name()+": "+msg+"\r\n");
+            if (msg.startsWith("SERVER"))
+                bfw.write( type + " "+ id + " " +msg+"\r\n");
+            else
+                bfw.write( type + " "+ id + " " + chat.getClient_name()+": "+msg+"\r\n");
             //bfw.write(msg+"\r\n");
             //bfw.newLine();
             //chat.get_area().append(chat.getClient_name()+": " + chat.getUser_msg().getText() + "\r\n");
@@ -80,8 +92,8 @@ public class ClientThread extends Thread {
     }
 
 
-    /** funcao serve para receber mensagens de server
-     * @param chat frame de chat que nos utilizanos
+    /** function for recieve messegers from chat
+     * @param chat frame of chat that we are using to print a message
      */
     public void listen_to_server(Chat_Frame chat) {
         try {
@@ -102,7 +114,7 @@ public class ClientThread extends Thread {
 
 
     /**
-     * serve para fechar ClientTread
+     * its closing ClientThread
      */
     public void CloseThread() {
         try {
@@ -118,15 +130,16 @@ public class ClientThread extends Thread {
         }
     }
 
-    /** funcao faz eventos enviar_to_server() e CloseThread()
-     * @param chat frame de chat que nos utilizanos
+    /** when we have any event we use this function
+     * @param chat frame of chat that we are using
      */
     public void Action(Chat_Frame chat){
         try {
             if(chat.isBtnSend_isClicked()) {
-                enviar_to_server(chat.getUser_msg().getText(), chat);
+                enviar_to_server(chat.getUser_msg().getText(), chat,"MESSAGE",get_id());
                 chat.setBtnSend_isClicked(false);
             } else if(chat.isBtnExit_isClicked()){
+                enviar_to_server("SERVER: Saiu " + chat.getClient_name(), chat,"DISCONNECTED",get_id());
                 CloseThread();
                 chat.setBtnExit_isClicked(false);
             }
