@@ -1,4 +1,4 @@
-package server.src.main.java;
+package main.java;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,7 +10,7 @@ public class Main {
     private static int max = 2;
     private static Semaphore semaphore;
 
-    public static void main ( String[] args ) throws IOException {
+    public static void main ( String[] args ) {
 
         ArrayList<ServerThread> threadList = new ArrayList<>();
         semaphore = new Semaphore(max);
