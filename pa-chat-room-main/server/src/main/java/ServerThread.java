@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.net.URL;
 import java.util.concurrent.Semaphore;
 
 
@@ -12,6 +11,7 @@ public class ServerThread extends Thread {
     //Atributos estáticos
     //private final int port;
     private static ArrayList<ServerThread> threadList;
+    private String client_id;
     private String nome;
     private InputStreamReader inr;
     private BufferedReader bfr;
@@ -62,7 +62,7 @@ public class ServerThread extends Thread {
                         } else {
                             String[] sentence = new_msg.split(" ", 0);
                             for (String word : sentence) {
-                                System.out.println(word);
+                                //System.out.println(word);
                                 //System.out.println(filtro_palavras(word)+" LOGIC IS");
                                 if (filtro_palavras(word)) { //if true word in filtro
                                     msg = new_msg.replace(word, "*****");
@@ -92,6 +92,13 @@ public class ServerThread extends Thread {
     }
 
 
+    public String getClient_id(){
+        return client_id;
+    }
+
+    public void setClient_id(String id){
+        this.client_id=id;
+    }
 
     /**
      * @param word_msg entrada de palavra em mensagem
@@ -122,8 +129,19 @@ public class ServerThread extends Thread {
 
     }
 
-    public void server_log(String msg) {
-
+    public void server_log(String msg, String type,ServerThread st) throws IOException {
+        File log = new File("./pa-chat-room-main/server/server.log");
+        FileWriter wr = new FileWriter(log,true);
+        String id = st.getClient_id();
+        if (type.equals("MESSAGE")) {
+            String time1 = String.valueOf(java.time.LocalDateTime.now());
+            wr.write(time1 + " - Action : " + type + " - " + id + " - " + msg + " \r\n");
+        } else {
+            String time2 = String.valueOf(java.time.LocalDateTime.now());
+            wr.write(time2 + " - Action : " + type + " - " + id + " \r\n");
+        }
+        wr.flush();
+        wr.close();
     }
 
 

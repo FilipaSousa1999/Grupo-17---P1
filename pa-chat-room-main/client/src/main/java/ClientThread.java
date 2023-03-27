@@ -63,6 +63,10 @@ public class ClientThread extends Thread {
     }
 
 
+    /** funcao serve para enviar mennsagens ao server
+     * @param msg message que nos vamos enviar
+     * @param chat frame de chat que nos utilizanos
+     */
     public void enviar_to_server(String msg, Chat_Frame chat) {
         try
         {
@@ -78,6 +82,9 @@ public class ClientThread extends Thread {
     }
 
 
+    /** funcao serve para receber mensagens de server
+     * @param chat frame de chat que nos utilizanos
+     */
     public void listen_to_server(Chat_Frame chat) {
         try {
             in = new BufferedReader ( new InputStreamReader ( socket.getInputStream ( ) ) );
@@ -96,6 +103,9 @@ public class ClientThread extends Thread {
     }
 
 
+    /**
+     * serve para fechar ClientTread
+     */
     public void CloseThread() {
         try {
             bfw.write(chat.getClient_name()+" has left! \r\n");
@@ -111,6 +121,9 @@ public class ClientThread extends Thread {
         }
     }
 
+    /** funcao faz eventos enviar_to_server() e CloseThread()
+     * @param chat frame de chat que nos utilizanos
+     */
     public void Action(Chat_Frame chat){
         try {
             if(chat.isBtnSend_isClicked()) {
